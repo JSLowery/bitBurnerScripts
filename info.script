@@ -1,0 +1,49 @@
+var hostname = args[0];
+var server = getServer(hostname);
+var growth_amount = 1000000;
+var money_max = getServerMaxMoney(hostname);
+// var hack_ana_chance = hackAnalyzeChance(hostname);
+// hackAnalyzeThreads takes hostname and dollar ammount
+var hack_ana_threads = hackAnalyzeThreads(hostname, growth_amount);
+var hack_ana_security = hackAnalyzeSecurity(hack_ana_threads);
+
+
+var grow_threads = growthAnalyze(hostname, 1 +  growth_amount / money_max);
+var grow_ana_security = growthAnalyzeSecurity(grow_threads);
+
+var total_security_gain = hack_ana_security + grow_ana_security;
+
+var weaken_threads = 1;
+
+var weaken_ana = weakenAnalyze(weaken_threads, 1);
+while(weaken_ana < total_security_gain){
+	weaken_threads++;
+	weaken_ana = weakenAnalyze(weaken_threads, 1);
+}
+
+var weaken_ana = weakenAnalyze(weaken_threads, 1);
+var thread_total = hack_ana_threads + grow_threads + weaken_threads;
+
+
+for(var i in server){
+	tprint(i + ": " + server[i]);
+}
+tprint("Money available percent: ", server.moneyAvailable /server.moneyMax);
+
+// Get the security increase for a number of thread.
+tprint("hack security: ", hack_ana_security);
+// Predict the effect of hack.
+
+tprint("grow security: ", grow_ana_security);
+
+tprint("weaken threads: " + weaken_threads + " percent: " + weaken_threads / thread_total);
+tprint("grow threads: " + grow_threads + " percent: " + grow_threads / thread_total);
+tprint("hack threads: " + hack_ana_threads + " percent: " + hack_ana_threads / thread_total);
+
+
+
+tprint("total security gain: ", total_security_gain);
+tprint("weaken analyze: ", weaken_ana);
+
+// var thing = [hack_ana_threads, grow_threads, weaken_threads];
+// writePort

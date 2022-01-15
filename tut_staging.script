@@ -1,0 +1,104 @@
+disableLog("scp");
+// Defines the "target server", which is the server
+// that we're going to hack. In this case, it's "n00dles"
+var running_from = args[0];
+
+print("Running from: ", running_from);
+
+var tut_ram = getScriptRam("tut.script");
+var weaken_ram = getScriptRam("weaken.script");
+var grow_ram = getScriptRam("grow.script");
+var hack_ram = getScriptRam("hack.script");
+
+scp("hack.script", running_from);
+scp("weaken.script", running_from);
+scp("grow.script", running_from);
+var threads = 0;
+
+
+var server_ram = getServerMaxRam(running_from);
+var cur_ram = server_ram - getServerUsedRam(running_from);
+
+if (cur_ram < weaken_ram){
+    print("Didn't have enough memory to run. cur_ram: ", cur_ram);
+}
+
+var target = "joesguns";
+var pr2 = peek(2);
+
+if (pr2 != "NULL PORT DATA"){
+    target = pr2;
+}
+
+var min_hacking_difficulty = getServerMinSecurityLevel(target)
+var current_hacking_difficulty = getServerSecurityLevel(target)
+
+var weaken_ram = getScriptRam("weaken.script");
+var grow_ram = getScriptRam("grow.script");
+var hack_ram = getScriptRam("hack.script");
+
+var data = read("current_best.txt");
+var data_mut = data.split(",");
+
+var hack_ratio = data_mut[1];
+var grow_ratio = data_mut[2];
+var weaken_ratio = data_mut[3];
+
+print(hack_ratio, " ",grow_ratio, " ",  weaken_ratio);
+
+if (cur_ram <= 4){
+    var grow_threads = Math.max(Math.floor(cur_ram / grow_ram), 1);
+    print("grow_threads: ", grow_threads);
+}
+else{
+    print("Ram: " + cur_ram + ", Hack Ratio: " + hack_ratio + ", Hack Ram " + hack_ram);
+    var hack_threads = Math.floor(cur_ram * hack_ratio / hack_ram);
+    print("hack_threads: ", hack_threads);
+    var grow_threads = Math.floor(cur_ram * grow_ratio / grow_ram);
+    print("grow_threads: ", grow_threads);
+    var weaken_threads = Math.floor(cur_ram * weaken_ratio / weaken_ram);
+    print("weaken_threads: ", weaken_threads);
+}
+
+var max_money = getServerMaxMoney(target);
+var cur_money = getServerMoneyAvailable(target);
+var per_money = cur_money / max_money;
+print("percent money: " + per_money + ", current money: " + cur_money + ", max money: " + max_money);
+
+// If the system gets below 75% we want to aggressivly grow it.
+if(per_money < .75 && hack_threads > 0){
+    var tmp_thread = Math.floor(hack_threads / 2);
+    grow_threads += tmp_thread;
+    weaken_threads += hack_threads - tmp_thread;
+    hack_threads = 0;
+}
+// if(current_hacking_difficulty / min_hacking_d)
+var weaken_time = getWeakenTime(target); // slowest
+var grow_time = getGrowTime(target); // mid
+var hack_time = getHackTime(target); //fastest
+
+// Sleep Timers! 
+if(weaken_threads > 0){
+    var grow_sleep_time = weaken_time - grow_time;
+}
+else{
+    var grow_sleep_time = 1;
+}
+
+if(weaken_threads > 0 && grow_threads > 0){
+    var hack_sleep_time = weaken_time - hack_time;
+}
+else{
+    var hack_sleep_time = 1;
+}
+
+
+if(weaken_threads > 0){
+    exec("weaken.script", running_from, weaken_threads, target, running_from, weaken_threads);
+}
+if(grow_threads > 0){
+    exec("grow.script", running_from, grow_threads, target, running_from, grow_sleep_time, grow_threads);
+}
+if(hack_threads > 0){
+    exec("hack.script", running_from, hack_threads, target, running_from, hack_sleep_time, hack_threads);
+    }

@@ -1,0 +1,7 @@
+run("server.script", 1);
+run("hacknet.script");
+while(true){
+	run("profile.script", 1);
+	run("scanner.script", 1);
+	sleep (1200000);
+}

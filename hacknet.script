@@ -1,0 +1,80 @@
+function myMoney() {
+    return getServerMoneyAvailable("home");
+}
+
+disableLog("getServerMoneyAvailable");
+disableLog("sleep");
+
+var cnt = 0;
+
+while(true){
+    cnt = 50;
+    print("have hacknet nodes: ", hacknet.numNodes());
+
+    while (hacknet.numNodes() < cnt) {
+        var cost = hacknet.getPurchaseNodeCost();
+        print("The cost of a new node: ", cost);
+        print("My Money: ", myMoney());
+        if (myMoney() < cost) {
+            cnt = hacknet.numNodes();
+        }
+        else {
+            res = hacknet.purchaseNode();
+            print("Purchased hacknet Node with index " + res);
+        }
+    };
+
+    for (var i = 0; i < cnt; i++) {
+        while (hacknet.getNodeStats(i).level < 200) {
+            var cost = hacknet.getLevelUpgradeCost(i, 10);
+            if (myMoney() < cost) {
+                print("Need $" + cost + ". Have $" + myMoney(), " For LEVEL on: " , i);
+                sleep(3000);
+                break;
+            }
+            res = hacknet.upgradeLevel(i, 10);
+            print("Purchased hacknet level with index: " + i, " res: " +res);
+
+        };
+    };
+
+    print("All nodes upgraded to level 200");
+
+    for (var i = 0; i < cnt; i++) {
+        while (hacknet.getNodeStats(i).ram < 64) {
+            var cost = hacknet.getRamUpgradeCost(i, 2);
+            if (myMoney() < cost) {
+                print("Need $" + cost + " . Have $" + myMoney(), " For RAM on: ", i);
+                sleep(3000);
+                break;
+            }
+            res = hacknet.upgradeRam(i, 2);
+            print("Purchased hacknet ram with index: " + i, " res: " +res);
+
+        };
+    };
+
+    print("All nodes upgraded to 64GB RAM");
+
+    for (var i = 0; i < cnt; i++) {
+        while (hacknet.getNodeStats(i).cores < 16) {
+            var cost = hacknet.getCoreUpgradeCost(i, 1);
+            if (myMoney() < cost) {
+                print("Need $" + cost + " . Have $" + myMoney(), " For CORES on: ", i);
+                sleep(3000);
+                break;
+            }
+            res = hacknet.upgradeCore(i, 1);
+            print("Purchased hacknet cores with index: " + i, " res: " +res);
+
+        };
+    };
+
+    print("All nodes upgraded to 16 cores");
+    var production_all = 0;
+    for (var i = 0; i < hacknet.numNodes(); i++){
+        production_all += hacknet.getNodeStats(i).production
+    };
+    print("Total production is: ", production_all);
+    sleep(300000);
+}

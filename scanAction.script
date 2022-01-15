@@ -1,0 +1,99 @@
+function scanList(scan_item, is_refresh){
+	var port_programs = []
+	if (fileExists("BruteSSH.exe")){
+		port_programs.push("BruteSSH.exe")
+	}
+	if (fileExists("FTPCrack.exe")){
+		port_programs.push("FTPCrack.exe")
+	}
+	if (fileExists("HTTPWorm.exe")){
+		port_programs.push("HTTPWorm.exe")
+	}
+	if (fileExists("SQLInject.exe")){
+		port_programs.push("SQLInject.exe")
+	}
+	if (fileExists("relaySMTP.exe")){
+		port_programs.push("relaySMTP.exe")
+	}
+	var port_programs_number = port_programs.length;
+	
+	// var scan_list = scan(hostname);
+	var i = 0;
+	
+	print("========================");
+
+	var server = getServer(scan_item);
+
+	print({"Server" : server.hostname});
+	print("Port programs count: ", port_programs_number);
+
+	var has_root = server.hasAdminRights;
+
+	var ports_needed = server.numOpenPortsRequired - server.openPortCount;
+	var char_hack_level = getPlayer().hacking;
+	var req_hack_level = getServerRequiredHackingLevel(server.hostname);
+	print("Ports needed: ", ports_needed);
+	if(ports_needed <= port_programs_number && ports_needed > 0){
+
+		// run some crackers
+		print({"Running crackers": port_programs})
+
+		if (port_programs.includes("FTPCrack.exe"))	
+		ftpcrack(server.hostname);
+
+		if (port_programs.includes("BruteSSH.exe"))	
+		brutessh(server.hostname);
+		
+		if (port_programs.includes("SQLInject.exe"))	
+		sqlinject(server.hostname);
+
+		if (port_programs.includes("HTTPWorm.exe"))	
+		httpworm(server.hostname);
+
+		if (port_programs.includes("relaySMTP.exe"))	
+		relaysmtp(server.hostname);
+		
+		nuke(server.hostname);
+		print(server.hostname,  " now hackable");
+		//get this from source file 4
+		// installBackdoor(server.hostname);
+	}
+	if (ports_needed == 0){
+		nuke(server.hostname);
+		print(server.hostname,  " now hackable");
+		has_root = true;
+
+	}
+	if (ports_needed < port_programs_number && ports_needed > 0 
+		|| server.hostname == "home" 
+		|| !has_root
+		|| char_hack_level < req_hack_level){
+
+		print({"ports" : ports_needed < port_programs_number,
+		"home": server.hostname == "home",
+		"!root": !has_root});
+		i++;
+		return;
+	}
+	if(is_refresh == true){
+		print({"Killing all applications on: ": server.hostname})
+		killall(server.hostname);
+	}
+
+	
+
+	
+
+	// sleep(200);
+
+
+	// exec("tut.script", "home", 1, server.hostname);
+	writePort(1, server.hostname);
+	print("exec tut.script.script on : "  + server.hostname);
+
+
+	// exec("scan.script", server.hostname, 1);
+	// print("run scan.script on: " + server.hostname);
+
+	i++;
+}
