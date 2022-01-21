@@ -1,3 +1,4 @@
+disableLog("getServerMoneyAvailable");
 // How much RAM each purchased server will have. In this case, it'll
 // be 8GB.
 var ram = args[0];
@@ -17,7 +18,7 @@ for (var p = 0; p < current_servers.length; p++){
 
 var i =0;
 
-tprint("purchased server limit: ", getPurchasedServerLimit())
+print("purchased server limit: ", getPurchasedServerLimit())
 while (i < getPurchasedServerLimit()) {
     // Check if we have enough money to purchase a server
     if (getServerMoneyAvailable("home") > getPurchasedServerCost(ram)) {
@@ -27,8 +28,13 @@ while (i < getPurchasedServerLimit()) {
         //  3. Run our hacking script on the newly-purchased server with 3 threads
         //  4. Increment our iterator to indicate that we've bought a new server
         var hostname = purchaseServer("pserv-" + i, ram);
-
+        print(hostname);
         writePort(1, hostname);
         ++i;
+        print(i);
+        sleep(50);
+    }
+    else{
+        print(sprintf("Buying: %s available: %0.2e cost: %e", "pserv-" + i, getServerMoneyAvailable("home"), getPurchasedServerCost(ram)));
     }
 }

@@ -1,15 +1,18 @@
 var hostname = args[0];
 var server = getServer(hostname);
-var growth_amount = 1000000;
-var money_max = getServerMaxMoney(hostname);
+var growth_amount = 200000000;
+var money_max = server.moneyMax;
 // var hack_ana_chance = hackAnalyzeChance(hostname);
-// hackAnalyzeThreads takes hostname and dollar ammount
-var hack_ana_threads = hackAnalyzeThreads(hostname, growth_amount);
+// tprint("Strange Calculation: " + 1+growth_amount/money_max);
+growth_amount = money_max / 2;
+tprint(sprintf("growth amount: %e" , growth_amount));
+var grow_threads = growthAnalyze(hostname, 2 );
+
+var grow_ana_security = growthAnalyzeSecurity(grow_threads);
+
+var hack_ana_threads = Math.max(hackAnalyzeThreads(hostname, growth_amount), 1);
 var hack_ana_security = hackAnalyzeSecurity(hack_ana_threads);
 
-
-var grow_threads = growthAnalyze(hostname, 1 +  growth_amount / money_max);
-var grow_ana_security = growthAnalyzeSecurity(grow_threads);
 
 var total_security_gain = hack_ana_security + grow_ana_security;
 
@@ -20,6 +23,14 @@ while(weaken_ana < total_security_gain){
 	weaken_threads++;
 	weaken_ana = weakenAnalyze(weaken_threads, 1);
 }
+var weaken_threads_min = 1;
+
+var weaken_ana_min = weakenAnalyze(weaken_threads_min, 1);
+while(weaken_ana_min < server.hackDifficulty - server.minDifficulty){
+	weaken_threads_min++;
+	weaken_ana_min = weakenAnalyze(weaken_threads_min, 1);
+}
+
 
 var weaken_ana = weakenAnalyze(weaken_threads, 1);
 var thread_total = hack_ana_threads + grow_threads + weaken_threads;
@@ -28,7 +39,7 @@ var thread_total = hack_ana_threads + grow_threads + weaken_threads;
 for(var i in server){
 	tprint(i + ": " + server[i]);
 }
-tprint("Money available percent: ", server.moneyAvailable /server.moneyMax);
+tprint("INFO Money available percent: ", server.moneyAvailable /server.moneyMax);
 
 // Get the security increase for a number of thread.
 tprint("hack security: ", hack_ana_security);
@@ -36,9 +47,10 @@ tprint("hack security: ", hack_ana_security);
 
 tprint("grow security: ", grow_ana_security);
 
-tprint("weaken threads: " + weaken_threads + " percent: " + weaken_threads / thread_total);
-tprint("grow threads: " + grow_threads + " percent: " + grow_threads / thread_total);
-tprint("hack threads: " + hack_ana_threads + " percent: " + hack_ana_threads / thread_total);
+tprint("INFO weaken threads to min: " + weaken_threads_min);
+tprint("INFO weaken threads: " + weaken_threads + " percent: " + weaken_threads / thread_total);
+tprint("INFO grow threads: " + grow_threads + " percent: " + grow_threads / thread_total);
+tprint("INFO hack threads: " + hack_ana_threads + " percent: " + hack_ana_threads / thread_total);
 
 
 

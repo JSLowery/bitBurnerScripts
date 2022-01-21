@@ -1,7 +1,14 @@
-run("server.script", 1);
+run("server.js", 1);
 run("hacknet.script");
+run("profile.js", 1);
+
+
+var tim = new Date().getTime();
 while(true){
-	run("profile.script", 1);
-	run("scanner.script", 1);
-	sleep (1200000);
+	run("scanner.js", 1);
+	sleep (1000);
+	if(new Date().getTime() - tim >= 1000){
+		run("profile.js", 1);
+		tim = new Date().getTime();
+	}
 }

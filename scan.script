@@ -1,0 +1,69 @@
+function scan(scan_list, is_refresh) {
+	var port_programs_number = 2;
+	var i = 0;
+
+	while (i < scan_list.length) {
+		print("========================");
+		var server = getServer(scan_list[i]);
+
+		print({ "Server": server.hostname });
+		var has_root = server.hasAdminRights;
+		var ports_needed = server.numOpenPortsRequired - server.openPortsCount;
+
+		if (ports_needed <= port_programs_number) {
+
+			// run some crackers
+			print({ "Running crackers": "SSH, FTP, NUKE" })
+			ftpcrack(server.hostname);
+			brutessh(server.hostname);
+			nuke(server.hostname);
+			//get this from source file 4
+			// installBackdoor(server.hostname);
+		}
+		if (ports_needed < port_programs_number
+			|| (scriptRunning("tut.script", server.hostname)
+				|| scriptRunning("scan.script", server.hostname)
+				&& !is_refresh)
+			|| server.hostname == "home"
+			|| !has_root) {
+
+			print("ditching out because one of these is true");
+			print({
+				"=======ports": ports_needed < port_programs_number,
+				"======tut_script_running": scriptRunning("tut.script", server.hostname),
+				"======scan_script_running": scriptRunning("scan.script", server.hostname),
+
+				"======home": server.hostname == "home",
+				"======!is_refresh": !is_refresh,
+
+				"======root": !has_root
+			});
+			i++;
+			continue;
+		}
+		if (is_refresh == true) {
+			print({ "Killing all applications on: ": server.hostname })
+			killall(server.hostname);
+		}
+
+
+
+		scp("hack.script", server.hostname)
+		scp("weaken.script", server.hostname)
+		scp("grow.script", server.hostname)
+		scp("tut.script", server.hostname);
+		scp("scan.script", server.hostname);
+
+		sleep(200);
+
+
+		exec("tut.script", "home", 1, server.hostname);
+		print("exec tut.script.script on : " + server.hostname);
+
+
+		// exec("scan.script", server.hostname, 1);
+		// print("run scan.script on: " + server.hostname);
+
+		i++;
+	}
+}

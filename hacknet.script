@@ -13,8 +13,8 @@ while(true){
 
     while (hacknet.numNodes() < cnt) {
         var cost = hacknet.getPurchaseNodeCost();
-        print("The cost of a new node: ", cost);
-        print("My Money: ", myMoney());
+        print(sprintf("The cost of a new node: %0.3e", cost));
+        print(sprintf("My Money: %0.3e", myMoney()));
         if (myMoney() < cost) {
             cnt = hacknet.numNodes();
         }
@@ -28,7 +28,7 @@ while(true){
         while (hacknet.getNodeStats(i).level < 200) {
             var cost = hacknet.getLevelUpgradeCost(i, 10);
             if (myMoney() < cost) {
-                print("Need $" + cost + ". Have $" + myMoney(), " For LEVEL on: " , i);
+                print(sprintf("Need $%0.3e Have $%0.3e For LEVEL on: %s" , cost, myMoney(), i));
                 sleep(3000);
                 break;
             }
@@ -38,13 +38,13 @@ while(true){
         };
     };
 
-    print("All nodes upgraded to level 200");
+    print("All nodes upgraded to max level");
 
     for (var i = 0; i < cnt; i++) {
         while (hacknet.getNodeStats(i).ram < 64) {
             var cost = hacknet.getRamUpgradeCost(i, 2);
             if (myMoney() < cost) {
-                print("Need $" + cost + " . Have $" + myMoney(), " For RAM on: ", i);
+                print(sprintf("Need $%0.3e Have $%0.3e For RAM on: %s" , cost, myMoney(), i));
                 sleep(3000);
                 break;
             }
@@ -54,13 +54,13 @@ while(true){
         };
     };
 
-    print("All nodes upgraded to 64GB RAM");
+    print("All nodes upgraded to max RAM");
 
     for (var i = 0; i < cnt; i++) {
         while (hacknet.getNodeStats(i).cores < 16) {
             var cost = hacknet.getCoreUpgradeCost(i, 1);
             if (myMoney() < cost) {
-                print("Need $" + cost + " . Have $" + myMoney(), " For CORES on: ", i);
+                print(sprintf("Need $%0.3e Have $%0.3e For RAM on: %s" , cost, myMoney(), i));
                 sleep(3000);
                 break;
             }
@@ -70,11 +70,20 @@ while(true){
         };
     };
 
-    print("All nodes upgraded to 16 cores");
+    print("All nodes upgraded to max cores");
     var production_all = 0;
     for (var i = 0; i < hacknet.numNodes(); i++){
         production_all += hacknet.getNodeStats(i).production
     };
-    print("Total production is: ", production_all);
+    print(sprintf("Total production is: %0.3e", production_all));
+	var currentdate = new Date();
+	var datetime = "Last Sync: " + currentdate.getDate() + "/"
+					+ (currentdate.getMonth()+1)  + "/" 
+					+ currentdate.getFullYear() + " @ "  
+					+ currentdate.getHours() + ":"  
+					+ currentdate.getMinutes() + ":" 
+					+ currentdate.getSeconds() + ":"
+					+ currentdate.getMilliseconds();
+    print(datetime);
     sleep(300000);
 }

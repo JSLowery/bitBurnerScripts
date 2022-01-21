@@ -1,6 +1,0 @@
-target = args[0];
-hostname = args[1];
-sleep_time = args[2];
-sleep(sleep_time);
-hack(target);
-writePort(1, hostname);
