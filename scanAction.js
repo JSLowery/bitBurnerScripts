@@ -21,24 +21,24 @@ export async function scanList(ns, scan_item, is_refresh){
 	// var scan_list = scan(hostname);
 	var i = 0;
 	
-	ns.print("========================");
+	// ns.print("========================");
 
 	var server = ns.getServer(scan_item);
 
-	ns.print({"Server" : server.hostname});
-	ns.print("Port programs count: ", port_programs_number);
+	// ns.print({"Server" : server.hostname});
+	// ns.print("Port programs count: ", port_programs_number);
 
 	var has_root = server.hasAdminRights;
 
 	var ports_needed = server.numOpenPortsRequired - server.openPortCount;
 	var char_hack_level = ns.getHackingLevel();
 	var req_hack_level = server.requiredHackingSkill;
-	ns.print("Ports needed: ", ports_needed);
+	// ns.print("Ports needed: ", ports_needed);
 	
 	if(ports_needed <= port_programs_number && ports_needed > 0 && !has_root){
 
 		// run some crackers
-		ns.print({"Running crackers": port_programs})
+		// ns.print({"Running crackers": port_programs})
 
 		if (port_programs.includes("FTPCrack.exe"))	
 		ns.ftpcrack(server.hostname);
@@ -56,14 +56,14 @@ export async function scanList(ns, scan_item, is_refresh){
 		ns.relaysmtp(server.hostname);
 		
 		ns.nuke(server.hostname);
-		ns.print(server.hostname,  " now hackable");
+		// ns.print(server.hostname,  " now hackable");
 		//get this from source file 4
 		// installBackdoor(server.hostname);
 	}
 
 	if (ports_needed == 0 && !has_root){
 		ns.nuke(server.hostname);
-		ns.print(server.hostname,  " now hackable");
+		// ns.print(server.hostname,  " now hackable");
 		has_root = true;
 
 	}
@@ -73,10 +73,11 @@ export async function scanList(ns, scan_item, is_refresh){
 		|| !has_root
 		|| char_hack_level < req_hack_level){
 
-		ns.print({"ports" : ports_needed < port_programs_number,
-		"home": server.hostname == "home",
-		"!root": !has_root});
+		// ns.print({"ports" : ports_needed < port_programs_number,
+		// "home": server.hostname == "home",
+		// "!root": !has_root});
 		i++;
+		// await ns.sleep(1);
 		return;
 	}
 
@@ -95,18 +96,15 @@ export async function scanList(ns, scan_item, is_refresh){
 	// 	}
 	// }
 	if(is_refresh == true){
-		ns.print({"Killing all applications on: ": server.hostname})
+		// ns.print({"Killing all applications on: ": server.hostname})
 		ns.killall(server.hostname);
 	}
 
-	if(server.maxRam < 4 || server.ramUsed / server.maxRam >= .75){
-		i++;
-		return;
-	}
-	if(server.hostname){
-		ns.print("exec tut.script.script on : "  + server.hostname);
+	if(server.maxRam >= 4 && server.ramUsed / server.maxRam < .999 && server.maxRam - server.ramUsed >= 4){
+		// ns.print("exec tut.script.script on : "  + server.hostname);
 		await ns.writePort(1, server.hostname);
 		await ns.write("hackable.lit", server.hostname+ "\n","a");
 	}
 	i++;
+	// await ns.sleep(1);
 }

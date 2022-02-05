@@ -8,7 +8,7 @@ disableLog("sleep");
 var cnt = 0;
 
 while(true){
-    cnt = 50;
+    cnt = 500;
     print("have hacknet nodes: ", hacknet.numNodes());
 
     while (hacknet.numNodes() < cnt) {
